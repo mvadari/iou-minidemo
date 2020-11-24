@@ -105,6 +105,27 @@ async function main() {
   )
   console.log(sendPaymentResult, '\n')
 
+  /*
+    PART 3: REDEEMING ISSUED CURRENCY
+  */
+  console.log('')
+  console.log('Part 3: Redeeming Issued Currency')
+
+  const redeemAmount = '100'
+
+  console.log('Redeeming customer\'s issued currency')
+  console.log(`- Redeemer: ${customerWallet.getAddress()}`)
+  console.log(`- Issuer: ${issuerWallet.getAddress()}`)
+  console.log(`- Amount: ${redeemAmount} ${issuedCurrencyCurrency}`)
+
+  const redeemResult = await issuedCurrencyClient.redeemIssuedCurrency(
+    customerWallet,
+    issuedCurrencyCurrency,
+    issuerWallet.getAddress(),
+    redeemAmount,
+  )
+  console.log(redeemResult, '\n')
+
   issuedCurrencyClient.webSocketNetworkClient.close()
 }
 
