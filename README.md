@@ -4,6 +4,6 @@ To set this up:
 - Clone the repo
 - Run `npm install`
 - Clone the Xpring-JS repo locally, build it
-- Expose `WalletFactory` and `IssuedCurrencyClient`
+- Expose `WalletFactory`, `IssuedCurrencyClient`, and `XrpTestUtils`
 - Set up `npm link` to connect the Xpring-JS repo to this repo
 - Run `node src/index.js`
