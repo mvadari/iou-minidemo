@@ -1,0 +1,19 @@
+{
+  "name": "iou-minidemo",
+  "version": "1.0.0",
+  "description": "RippleX SDK IOU Mini-Demo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mvadari/iou-minidemo.git"
+  },
+  "author": "mvadari",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mvadari/iou-minidemo/issues"
+  },
+  "homepage": "https://github.com/mvadari/iou-minidemo#readme"
+}
