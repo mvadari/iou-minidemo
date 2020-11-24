@@ -1,6 +1,6 @@
-const { IssuedCurrencyClient, XrplNetwork, XRPTestUtils } = require("xpring-js")
+const { IssuedCurrencyClient, XrplNetwork, XRPTestUtils } = require('xpring-js')
 
-const grpcUrl = "test.xrp.xpring.io:50051"
+const grpcUrl = 'test.xrp.xpring.io:50051'
 const webSocketUrl = 'wss://wss.test.xrp.xpring.io'
 
 
@@ -13,31 +13,32 @@ async function main() {
     XrplNetwork.Test,
   )
 
-  console.log("Generating issuing and operational wallets...")
+  console.log('Creating issuing and operational wallets...')
 
   const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
+  console.log('Issuing Address:', issuerWallet.getAddress())
+
   const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
+  console.log('Operational Address:', operationalWallet.getAddress(), '\n')
 
-  console.log("Issuing Address:", issuerWallet.getAddress())
-  console.log("Operational Address:", operationalWallet.getAddress(), "\n")
+  const operationalTrustLineLimit = '100'
+  const issuedCurrencyCurrency = 'FOO'
+  
+  /*
+    STEP 1: CREATING ISSUED CURRENCY
+  */
+  console.log('Step 1: Creating Issued Currency')
+  console.log(`Building trustline from issuer to operational wallet for ${operationalTrustLineLimit} ${issuedCurrencyCurrency}`)
 
-  const trustLineLimit = '100'
-  const trustLineCurrency = 'USD'
-
-  console.log(`Building trustline from issuer to operational wallet for ${trustLineLimit} ${trustLineCurrency}`)
-
-  const trustLineResult = await issuedCurrencyClient.createTrustLine(
+  const operationalTrustLineResult = await issuedCurrencyClient.createTrustLine(
     issuerWallet.getAddress(),
-    trustLineCurrency,
-    trustLineLimit,
+    issuedCurrencyCurrency,
+    operationalTrustLineLimit,
     operationalWallet,
   )
-
-  console.log(trustLineResult)
-  console.log("")
+  console.log(operationalTrustLineResult, '\n')
 
   const issuedCurrencyAmount = '100'
-  const issuedCurrencyCurrency = trustLineCurrency
 
   console.log(`Creating ${issuedCurrencyAmount} ${issuedCurrencyCurrency} Issued Currency`)
   console.log(`Issued by ${issuerWallet.getAddress()} to ${operationalWallet.getAddress()}`)
@@ -48,8 +49,48 @@ async function main() {
     issuedCurrencyCurrency,
     issuedCurrencyAmount,
   )
+  console.log(issuedCurrencyResult, '\n')
 
-  console.log(issuedCurrencyResult)
+  /*
+    STEP 2: SENDING ISSUED CURRENCY TO CUSTOMER
+  */
+  console.log('Step 2: Sending Issued Currency to Customer')
+  
+  console.log('Enable rippling on the issuer wallet (necessary for sending issued currency)')
+  
+  const enableRipplingResult = await issuedCurrencyClient.enableRippling(issuerWallet)
+  console.log(enableRipplingResult, '\n')
+
+  console.log('Creating customer wallet...')
+
+  const customerWallet = await XRPTestUtils.randomWalletFromFaucet()
+  console.log('Customer Address:', customerWallet.getAddress(), '\n')
+
+  const customerTrustLineLimit = '100'
+  
+  console.log(`Building trustline from issuer to customer wallet for ${customerTrustLineLimit} ${issuedCurrencyCurrency}`)
+  
+  const customerTrustLineResult = await issuedCurrencyClient.createTrustLine(
+    issuerWallet.getAddress(),
+    issuedCurrencyCurrency,
+    customerTrustLineLimit,
+    customerWallet,
+  )
+  console.log(customerTrustLineResult, '\n')
+
+  const sendingAmount = '100'
+
+  console.log(`Sending ${sendingAmount} ${issuedCurrencyCurrency} from ${operationalWallet.getAddress()} to ${customerWallet.getAddress()}`)
+  
+  const sendPaymentResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
+    operationalWallet,
+    customerWallet.getAddress(),
+    issuedCurrencyCurrency,
+    issuerWallet.getAddress(),
+    sendingAmount,
+  )
+  console.log(sendPaymentResult, '\n')
+
   issuedCurrencyClient.webSocketNetworkClient.close()
 }
 
