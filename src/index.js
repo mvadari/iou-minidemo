@@ -13,10 +13,12 @@ async function main() {
     XrplNetwork.Test,
   )
 
-  console.log('Creating issuing and customer wallets...')
+  console.log('Creating issuing wallet...\n')
 
   const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
-  console.log('Issuing Address:', issuerWallet.getAddress())
+  console.log('Issuing Address:', issuerWallet.getAddress(), '\n')
+
+  console.log('Creating customer wallet...\n')
 
   const customerWallet1 = await XRPTestUtils.randomWalletFromFaucet()
   console.log('Customer Address:', customerWallet1.getAddress(), '\n')
@@ -27,13 +29,13 @@ async function main() {
   /*
     PART 1: CREATING ISSUED CURRENCY
   */
-  console.log('')
+  console.log('****************************************************************************************************************\n')
   console.log('Part 1: Creating Issued Currency')
   
-  console.log(`Building trustline from operational to issuer wallet`)
+  console.log(`Building trustline from operational to issuer wallet...`)
   console.log(`- Trust Extender (operational wallet): ${customerWallet1.getAddress()}`)
   console.log(`- Issuer: ${issuerWallet.getAddress()}`)
-  console.log(`- Amount: ${customerTrustLineLimit1} ${issuedCurrencyCurrency}`)
+  console.log(`- Amount: ${customerTrustLineLimit1} ${issuedCurrencyCurrency}\n`)
 
   const customerTrustLineResult1 = await issuedCurrencyClient.createTrustLine(
     issuerWallet.getAddress(),
@@ -46,10 +48,10 @@ async function main() {
 
   const issuedCurrencyAmount = '100'
 
-  console.log(`Creating Issued Currency`)
+  console.log(`Creating Issued Currency...`)
   console.log(`Amount: ${issuedCurrencyAmount} ${issuedCurrencyCurrency}`)
   console.log(`Issuer: ${issuerWallet.getAddress()}`)
-  console.log(`Issued to: ${customerWallet1.getAddress()}`)
+  console.log(`Issued to: ${customerWallet1.getAddress()}\n`)
 
   const issuedCurrencyResult = await issuedCurrencyClient.createIssuedCurrency(
     issuerWallet,
@@ -63,26 +65,26 @@ async function main() {
   /*
     PART 2: SENDING ISSUED CURRENCY TO CUSTOMER
   */
-  console.log('')
+  console.log('****************************************************************************************************************\n')
   console.log('Part 2: Sending Issued Currency to Another Customer')
   
-  console.log('Enable rippling on the issuer wallet (necessary for sending issued currency)')
+  console.log('Enabling rippling on the issuer wallet (necessary for sending issued currency)...\n')
   
   const enableRipplingResult = await issuedCurrencyClient.enableRippling(issuerWallet)
   console.log(enableRipplingResult)
   console.log("Result:", statusCodeToString(enableRipplingResult.status), '\n')
 
-  console.log('Creating customer wallet...')
+  console.log('Creating a second customer wallet...')
 
   const customerWallet2 = await XRPTestUtils.randomWalletFromFaucet()
-  console.log('Customer Address:', customerWallet2.getAddress(), '\n')
+  console.log('Customer 2 Address:', customerWallet2.getAddress(), '\n')
 
   const customerTrustLineLimit2 = '100'
   
-  console.log(`Building trustline from issuer to customer wallet`)
+  console.log(`Building trustline from issuer to customer wallet...`)
   console.log(`- Trust Extender (customer wallet): ${customerWallet2.getAddress()}`)
   console.log(`- Issuer: ${issuerWallet.getAddress()}`)
-  console.log(`- Amount: ${customerTrustLineLimit2} ${issuedCurrencyCurrency}`)
+  console.log(`- Amount: ${customerTrustLineLimit2} ${issuedCurrencyCurrency}\n`)
   
   const customerTrustLineResult2 = await issuedCurrencyClient.createTrustLine(
     issuerWallet.getAddress(),
@@ -95,10 +97,10 @@ async function main() {
 
   const sendingAmount = '100'
 
-  console.log(`Sending Issued Currency`)
+  console.log(`Sending Issued Currency...`)
   console.log(`- Amount: ${sendingAmount} ${issuedCurrencyCurrency}`)
   console.log(`- Sender: ${customerWallet1.getAddress()}`)
-  console.log(`- Destination: ${customerWallet2.getAddress()}`)
+  console.log(`- Destination: ${customerWallet2.getAddress()}\n`)
   
   const sendPaymentResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
     customerWallet1,
@@ -113,15 +115,15 @@ async function main() {
   /*
     PART 3: REDEEMING ISSUED CURRENCY
   */
-  console.log('')
+  console.log('****************************************************************************************************************\n')
   console.log('Part 3: Redeeming Issued Currency')
 
   const redeemAmount = '100'
 
-  console.log('Redeeming customer\'s issued currency')
+  console.log('Redeeming customer\'s issued currency...')
   console.log(`- Redeemer: ${customerWallet2.getAddress()}`)
   console.log(`- Issuer: ${issuerWallet.getAddress()}`)
-  console.log(`- Amount: ${redeemAmount} ${issuedCurrencyCurrency}`)
+  console.log(`- Amount: ${redeemAmount} ${issuedCurrencyCurrency}\n`)
 
   const redeemResult = await issuedCurrencyClient.redeemIssuedCurrency(
     customerWallet2,
