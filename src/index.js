@@ -25,10 +25,15 @@ async function main() {
   const issuedCurrencyCurrency = 'FOO'
   
   /*
-    STEP 1: CREATING ISSUED CURRENCY
+    PART 1: CREATING ISSUED CURRENCY
   */
-  console.log('Step 1: Creating Issued Currency')
-  console.log(`Building trustline from issuer to operational wallet for ${operationalTrustLineLimit} ${issuedCurrencyCurrency}`)
+  console.log('')
+  console.log('Part 1: Creating Issued Currency')
+  
+  console.log(`Building trustline from operational to issuer wallet`)
+  console.log(`- Trust Extender (operational wallet): ${operationalWallet.getAddress()}`)
+  console.log(`- Issuer: ${issuerWallet.getAddress()}`)
+  console.log(`- Amount: ${operationalTrustLineLimit} ${issuedCurrencyCurrency}`)
 
   const operationalTrustLineResult = await issuedCurrencyClient.createTrustLine(
     issuerWallet.getAddress(),
@@ -40,8 +45,10 @@ async function main() {
 
   const issuedCurrencyAmount = '100'
 
-  console.log(`Creating ${issuedCurrencyAmount} ${issuedCurrencyCurrency} Issued Currency`)
-  console.log(`Issued by ${issuerWallet.getAddress()} to ${operationalWallet.getAddress()}`)
+  console.log(`Creating Issued Currency`)
+  console.log(`Amount: ${issuedCurrencyAmount} ${issuedCurrencyCurrency}`)
+  console.log(`Issuer: ${issuerWallet.getAddress()}`)
+  console.log(`Issued to: ${operationalWallet.getAddress()}`)
 
   const issuedCurrencyResult = await issuedCurrencyClient.createIssuedCurrency(
     issuerWallet,
@@ -52,9 +59,10 @@ async function main() {
   console.log(issuedCurrencyResult, '\n')
 
   /*
-    STEP 2: SENDING ISSUED CURRENCY TO CUSTOMER
+    PART 2: SENDING ISSUED CURRENCY TO CUSTOMER
   */
-  console.log('Step 2: Sending Issued Currency to Customer')
+  console.log('')
+  console.log('Part 2: Sending Issued Currency to Customer')
   
   console.log('Enable rippling on the issuer wallet (necessary for sending issued currency)')
   
@@ -68,7 +76,10 @@ async function main() {
 
   const customerTrustLineLimit = '100'
   
-  console.log(`Building trustline from issuer to customer wallet for ${customerTrustLineLimit} ${issuedCurrencyCurrency}`)
+  console.log(`Building trustline from issuer to customer wallet`)
+  console.log(`- Trust Extender (customer wallet): ${customerWallet.getAddress()}`)
+  console.log(`- Issuer: ${issuerWallet.getAddress()}`)
+  console.log(`- Amount: ${customerTrustLineLimit} ${issuedCurrencyCurrency}`)
   
   const customerTrustLineResult = await issuedCurrencyClient.createTrustLine(
     issuerWallet.getAddress(),
@@ -80,7 +91,10 @@ async function main() {
 
   const sendingAmount = '100'
 
-  console.log(`Sending ${sendingAmount} ${issuedCurrencyCurrency} from ${operationalWallet.getAddress()} to ${customerWallet.getAddress()}`)
+  console.log(`Sending Issued Currency`)
+  console.log(`- Amount: ${sendingAmount} ${issuedCurrencyCurrency}`)
+  console.log(`- Sender: ${operationalWallet.getAddress()}`)
+  console.log(`- Destination: ${customerWallet.getAddress()}`)
   
   const sendPaymentResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
     operationalWallet,
