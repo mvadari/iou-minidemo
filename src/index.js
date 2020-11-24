@@ -1,4 +1,4 @@
-const { IssuedCurrencyClient, XrplNetwork, XRPTestUtils } = require('xpring-js')
+const { IssuedCurrencyClient, XrplNetwork, XRPTestUtils, TransactionStatus } = require('xpring-js')
 
 const grpcUrl = 'test.xrp.xpring.io:50051'
 const webSocketUrl = 'wss://wss.test.xrp.xpring.io'
@@ -41,7 +41,8 @@ async function main() {
     operationalTrustLineLimit,
     operationalWallet,
   )
-  console.log(operationalTrustLineResult, '\n')
+  console.log(operationalTrustLineResult)
+  console.log("Result:", statusCodeToString(operationalTrustLineResult.status), '\n')
 
   const issuedCurrencyAmount = '100'
 
@@ -56,7 +57,8 @@ async function main() {
     issuedCurrencyCurrency,
     issuedCurrencyAmount,
   )
-  console.log(issuedCurrencyResult, '\n')
+  console.log(issuedCurrencyResult)
+  console.log("Result:", statusCodeToString(issuedCurrencyResult.status), '\n')
 
   /*
     PART 2: SENDING ISSUED CURRENCY TO CUSTOMER
@@ -67,7 +69,8 @@ async function main() {
   console.log('Enable rippling on the issuer wallet (necessary for sending issued currency)')
   
   const enableRipplingResult = await issuedCurrencyClient.enableRippling(issuerWallet)
-  console.log(enableRipplingResult, '\n')
+  console.log(enableRipplingResult)
+  console.log("Result:", statusCodeToString(enableRipplingResult.status), '\n')
 
   console.log('Creating customer wallet...')
 
@@ -87,7 +90,8 @@ async function main() {
     customerTrustLineLimit,
     customerWallet,
   )
-  console.log(customerTrustLineResult, '\n')
+  console.log(customerTrustLineResult)
+  console.log("Result:", statusCodeToString(customerTrustLineResult.status), '\n')
 
   const sendingAmount = '100'
 
@@ -103,7 +107,8 @@ async function main() {
     issuerWallet.getAddress(),
     sendingAmount,
   )
-  console.log(sendPaymentResult, '\n')
+  console.log(sendPaymentResult)
+  console.log("Result:", statusCodeToString(sendPaymentResult.status), '\n')
 
   /*
     PART 3: REDEEMING ISSUED CURRENCY
@@ -124,9 +129,34 @@ async function main() {
     issuerWallet.getAddress(),
     redeemAmount,
   )
-  console.log(redeemResult, '\n')
+  console.log(redeemResult)
+  console.log("Result:", statusCodeToString(redeemResult.status), '\n')
 
   issuedCurrencyClient.webSocketNetworkClient.close()
+}
+
+function statusCodeToString(status) {
+  switch (status) {
+    case TransactionStatus.ClaimedCostOnly_PathDry:
+      return "CLAIMED COST, PATH DRY"
+    case TransactionStatus.ClaimedCostOnly_PathPartial:
+      return "CLAIMED COST, PATH PARTIAL"
+    case TransactionStatus.ClaimedCostOnly:
+      return "CLAIMED COST"
+    case TransactionStatus.MalformedTransaction:
+      return "INVALID, MALFORMED TRANSACTION"
+    case TransactionStatus.Failed:
+      return "FAILED"
+    case TransactionStatus.Pending:
+      return "PENDING"
+    case TransactionStatus.Succeeded:
+      return "SUCCEEDED"
+    case TransactionStatus.LastLedgerSequenceExpired:
+      return "LAST LEDGER SEQUENCE EXPIRED"
+    case TransactionStatus.Unknown:
+    default:
+      return "UNKNOWN"
+  }
 }
 
 // Exit with an error code if there is an error. 
